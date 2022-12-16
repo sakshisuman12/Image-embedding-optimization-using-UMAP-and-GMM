@@ -1,0 +1,80 @@
+n_anchor_threshold: 100
+paths:
+    embeddings: "/home/ubuntu/bpml-logo/data/index"
+    umap_embeddings: "/tmp/umap_final.json"
+    new_brand: "/home/ubuntu/bpml-logo/data/final_run_small_dataset.json"
+    metadata: "/home/ubuntu/bpml-logo/data/index_metadata.json"
+    bbox: "./data/bbox_annotation_impression_20211123.csv"
+    gmm_models: "/tmp/gmm_models.pkl"
+    gmm_weights: "/tmp/gmm_weights_final_{group}.json"
+    gmm_eval_log_likelihood: "/tmp/gmm_models.pkl"
+    gmm_eval_performance: "/tmp/gmm_performance_final.json"
+    save_gmm_matrices: "/tmp/gmm_matrices_final_{group}.json"
+    unpacked_train_test_embeddings: "/home/ubuntu/bpml-logo/data/final_run_small_dataset.json"
+    group_mappings: "/tmp/cluster_groups.json"
+    grouped_umap_path: "/tmp/umap_embeddings/{group}_umap_embedding.json"
+    umap_object: "/tmp/umap_embeddings/{group}_umap_object.pkl"
+    kmeans_object: "/tmp/kmeans_object.pkl"
+    kmeans_centroids: "/tmp/kmeans_centroids.json"
+
+urls:
+    roi_mirador: "https://mirador.corp.amazon.com/api/logo/brands/{gcorid}/images/{anchor_image}"
+    media_amazon: "https://m.media-amazon.com/images/I/{physical_id}.jpg"
+
+dr:
+    umap:
+        random_state: 9
+        n_neighbors: 7
+        n_components: 20
+    groups: -1
+    batch_size: 5
+    save_path: "/tmp/embeddings"
+
+outliers_detection:
+    # Local Outlier Factor
+    LOF:
+        buckets:
+                -
+                    - 50
+                    - 100
+                -
+                    - 101
+                    - 300
+                -
+                    - 301
+                    - 500
+                -
+                    - 501
+                    - 800
+                -
+                    - 801
+                    - 1000
+                -
+                    - 1001
+                    - 2000
+                -
+                    - 2001
+                    - 6000
+        contamination_scores:
+                - 0.002
+                - 0.002
+                - 0.002
+                - 0.002
+                - 0.005
+                - 0.01
+                - 0.01
+    output_path: "/tmp/outliers.csv"
+
+clustering:
+    save_path: "/tmp/results_dim20.json"
+    kmeans:
+        n_clusters: 2
+        random_state: 42
+    hdbscan:
+        metric: "euclidean"
+        min_samples: 10
+        min_cluster_size: 50
+        prediction_data: True
+    gmm:
+        n_components: 4
+    outlier_threshold: 0.5
